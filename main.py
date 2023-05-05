@@ -15,7 +15,7 @@ BACKGROUND = (153,204,235)
 WINDOW = pygame.display.set_mode((CELL_NUMBER * CELL_SIZE, CELL_NUMBER * CELL_SIZE))
 CLOCK = pygame.time.Clock()
 SCREEN_UPDATE = pygame.USEREVENT
-pygame.time.set_timer(SCREEN_UPDATE, 100)
+pygame.time.set_timer(SCREEN_UPDATE, 75)
 pygame.init()
 
 
@@ -41,6 +41,7 @@ class Snake():
         # Start the snake with 3 squares moving towards the right.
         self.body = [Vector2(5, 10), Vector2(4, 10), Vector2(3, 10)]
         self.direction = Vector2(1,0)
+        self.new_direction = Vector2(0, 1)
         self.new_block = False
         self.score = -1
 
@@ -67,6 +68,7 @@ class Snake():
             body_copy = self.body[:-1]
             body_copy.insert(0, body_copy[0] + self.direction)
             self.body = body_copy
+        self.direction = self.new_direction
 
     # If the snake collides with an apple, set new_block to True.
     def add_block(self):
@@ -81,6 +83,7 @@ class Game:
         self.snake = Snake()
         self.fruit = Fruit()
         self.state = self.title_screen
+
 
     def draw_elements(self):
         self.fruit.draw_fruit()
@@ -133,6 +136,7 @@ class Game:
                 self.snake.score = 0
                 self.snake.body = [Vector2(5, 10), Vector2(4, 10), Vector2(3, 10)]
                 self.snake.direction = Vector2(1,0)
+                self.snake.new_direction = Vector2(1, 0)
                 self.fruit.randomize()
                 self.state = self.main_game
 
@@ -149,16 +153,17 @@ class Game:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_UP:
                 if self.snake.direction.y != 1:
-                    self.snake.direction = Vector2(0, -1)
+                    self.snake.new_direction = Vector2(0, -1)
             if event.key == pygame.K_DOWN:
                 if self.snake.direction.y != -1:
-                    self.snake.direction = Vector2(0, 1)
+                    self.snake.new_direction = Vector2(0, 1)
             if event.key == pygame.K_RIGHT:
                 if self.snake.direction.x != -1:
-                    self.snake.direction = Vector2(1, 0)
+                    self.snake.new_direction = Vector2(1, 0)
             if event.key == pygame.K_LEFT:
                 if self.snake.direction.x != 1:
-                    self.snake.direction = Vector2(-1, 0)
+                    self.snake.new_direction = Vector2(-1, 0)
+
 
 
 def main():
@@ -174,7 +179,7 @@ def main():
         game.fruit_position()
         pygame.display.set_caption(f'Snake Score: {game.snake.score}!')
         pygame.display.update()
-        CLOCK.tick(60)
+        CLOCK.tick(100)
 
 
 if __name__ == '__main__':
